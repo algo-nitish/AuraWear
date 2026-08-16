@@ -7,6 +7,11 @@ import userRouter from './routes/userRoute.js'
 import productRouter from './routes/productRoute.js'
 import cartRouter from './routes/cartRoute.js'
 import orderRouter from './routes/orderRoute.js'
+import path from 'path'
+import { fileURLToPath } from 'url'
+
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
 
 // App Config
 
@@ -27,8 +32,21 @@ app.use('/api/product', productRouter)
 app.use('/api/cart', cartRouter)
 app.use('/api/order', orderRouter)
 
-app.get('/', (req,res) => {
-    res.send('API Working')
+// Serve Admin Dashboard
+app.use('/admin', express.static(path.join(__dirname, '../admin/dist')))
+
+// Serve Frontend
+app.use(express.static(path.join(__dirname, '../frontend/dist')))
+
+// Handle Client Routing for Frontend
+app.get('*', (req, res) => {
+    if (req.path.startsWith('/api')) {
+        return res.status(404).send('API endpoint not found');
+    }
+    if (req.path.startsWith('/admin')) {
+        return res.sendFile(path.join(__dirname, '../admin/dist/index.html'));
+    }
+    res.sendFile(path.join(__dirname, '../frontend/dist/index.html'))
 })
 
 app.listen(Port,() => console.log('Server is running on port : '+ Port))

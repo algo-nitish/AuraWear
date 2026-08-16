@@ -2,9 +2,9 @@ services:
   - type: web
     name: aurawear-backend
     env: node
-    rootDir: backend
-    buildCommand: npm install
-    startCommand: npm start
+    rootDir: .
+    buildCommand: "npm install --prefix frontend && npm run build --prefix frontend && npm install --prefix admin && npm run build --prefix admin && npm install --prefix backend"
+    startCommand: "npm start --prefix backend"
     envVars:
       - key: PORT
         value: 5000
